@@ -26,6 +26,7 @@ class Bureaucrat
       end
   end
 
+  # turn rules into graph
   def hashify(bags)
     hash = {}
     if bags.first.first.match?(/\d+|no other/)
