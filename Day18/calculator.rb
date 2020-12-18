@@ -1,4 +1,4 @@
-require 'pry'
+# require 'pry'
 
 class Calculator
   def initialize(eqns)
@@ -14,8 +14,6 @@ class Calculator
     eqns = @eqns.map(&:clone)
     eqns.map { |eqn| ap_calc(eqn) }
   end
-
-  private
 
   # 'standard' parentheses first, left to right operation
   def std_calc(arr)
@@ -53,6 +51,8 @@ class Calculator
       end
     end
   end
+
+  private
 
   # calc result of an expression and replace with its result in the array
   def eval_exp(arr, ind)
