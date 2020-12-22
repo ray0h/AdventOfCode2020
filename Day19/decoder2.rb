@@ -14,19 +14,61 @@ class Decoder
     @rules.each do |rule|
       key, value = rule.split(': ')
       value = value.match?(/[a-z]/) ? [value.match(/[a-z]/)[0]] : value.split(' ')
-      if value.include?(key)
-        ind = value.index(key)
-        value[ind] = ['rep']
-      end
       @hash[key.to_i] = value
     end
     @rules = @hash
   end
 
-  def solve
+  def solve_pt1
     fill_in
     possibles = @rules[0][0]
     p (@messages & possibles).length
+  end
+
+  def solve_pt2
+    # modified loop rules
+    # @rules[8] = 42 | 42 8
+    # @rules[11] = 42 31 | 42 11 31
+    # @rules[0] = 8 11
+
+    # doing it manually
+    # can have as many rule 42s in a row followed by a series of rule 31s.
+    fill_in
+
+    length42 = @rules[42].map(&:length).uniq.first
+    length31 = @rules[31].map(&:length).uniq.first
+    matches = 0
+    # binding.pry
+    @messages.each do |message|
+      use42 = true
+      start31 = nil
+      i = 0
+      # eval first substring
+      substr = message.slice(i..(i + length42 - 1))
+      next if i.zero? && !@rules[42].include?(substr)
+
+      i += length42
+      while i < message.length
+        substr1 = message.slice(i..(i + length42 - 1))
+        substr2 = message.slice(i..(i + length31 - 1))
+        # binding.pry if message == "aaaabbaaaabbaaa"
+
+        if @rules[42].include?(substr1) && use42 == true && i != message.length - length42
+          i += length42
+        elsif @rules[31].include?(substr2) && (start31.to_i > message.length / 2 || start31.to_i.zero?) 
+          start31 ||= i
+          i += length31
+          use42 = false
+          # binding.pry
+        else
+          # binding.pry
+          break
+        end
+      end
+      matches += 1 if i == message.length
+      p message if i == message.length
+    end
+    p matches
   end
 
   def fill_in
